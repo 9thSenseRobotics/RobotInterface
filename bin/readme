@@ -1,0 +1,4 @@
+This file exists just to allow the gen and bin directories
+to be in git without having real files in them
+It keeps both git and Eclipse happy.
+
