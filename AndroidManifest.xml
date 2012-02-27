@@ -18,16 +18,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
             <intent-filter>
-		    <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-		    </intent-filter>
-		    <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-		    android:resource="@xml/accessory_filter" />
+		    	<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+		     </intent-filter>
+		   	 <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+		     android:resource="@xml/accessory_filter" />
 
-    <uses-library android:name="com.android.future.usb.accessory"></uses-library>
+    		 <uses-library android:name="com.android.future.usb.accessory"></uses-library> />
+
+
+
         </activity>
+
+        <service
+             android:enabled="true"
+             android:name=".RobotInterfaceService">
+
+		</service>
 
         <receiver android:name=".RobotInterfaceBroadcastReceiver">
 			<intent-filter>

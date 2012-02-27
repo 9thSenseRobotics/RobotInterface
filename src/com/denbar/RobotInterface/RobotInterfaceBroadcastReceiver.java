@@ -21,13 +21,13 @@ public void onReceive(Context context, Intent intent) {
 }
 
 void UseData(Context context, String command, int value) {
-	Intent intent2open = new Intent(context, RobotInterfaceActivity.class);
-	intent2open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // don't know why this is needed
+	Intent intent2open = new Intent(context, RobotInterfaceService.class);
+	//intent2open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // don't know why this is needed
 				// but get a runtime crash without it
 	//intent2open.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //makes sure the activity doesn't re-open if already open
 	intent2open.putExtra("command", command);
 	intent2open.putExtra("value", value);
-	context.startActivity(intent2open);
+	context.startService(intent2open);
 }
 
 /*
