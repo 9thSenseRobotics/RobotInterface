@@ -44,13 +44,13 @@ public class RobotInterfaceActivity extends Activity { // implements Runnable {
 
 	public void blinkLED(View v){
 
-		byte testdata;
+		String testdata;
 		if(buttonLED.isChecked())
-			testdata='f'; // button says on, light is off
+			testdata= "f"; // button says on, light is off
 		else
-			testdata='b'; // button says off, light is on
+			testdata= "b"; // button says off, light is on
 
-		serviceBinder.sendData(testdata);
+		serviceBinder.interpretCommand(testdata);
 
 		String messages = "To arduino" + serviceBinder.toArduino + ", from Arduino = " + serviceBinder.fromArduino;
 		mResponseField.setText(messages);

@@ -147,26 +147,28 @@ public class RobotInterfaceService extends Service implements Runnable {
 		}
 	}
 
-	public void sendData(byte value) {
-		byte[] buffer = new byte[1];
-		buffer[0] = value;
-		Toast.makeText(this, "sending data", Toast.LENGTH_SHORT).show();
+	public void sendData(String dataToSend) {
+		byte[] buffer = EncodingUtils.getAsciiBytes(dataToSend);
+		int len = dataToSend.length();
+
+		String message = "sending data, buffer length = " + len + ", value = "+ buffer[0];
+		for (int i = 1; i < len; i++) {
+			message += ", " + buffer[i];
+		}
+		Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
+
 		if (mOutputStream != null) {
 			try {
-				mOutputStream.write(buffer);
+				mOutputStream.write(buffer,0,len);
 			} catch (IOException e) {
 				Toast.makeText(this, "write failed", Toast.LENGTH_SHORT).show();
 				Log.e(TAG, "write failed", e);
 			}
 		}
 		else {
-			Toast.makeText(this, "mOutputSrream is null", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "mOutputStream is null", Toast.LENGTH_SHORT).show();
 		}
 	}
-
-//	@Override
-//	protected void onNewIntent(Intent intent) {
-//	super.onNewIntent(intent);
 
 	void ReceivedNewIntent(Intent intent) {
 		Log.d("YourActivity", "ReceivedNewIntent is called!");
@@ -178,32 +180,18 @@ public class RobotInterfaceService extends Service implements Runnable {
 			Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
 
 			toArduino = "toArduino = " + command;
-
-			byte[] buffer = EncodingUtils.getAsciiBytes(command);
-			int len = command.length();
-
-			message = "buffer length = " + len + ", value = "+ buffer[0];
-			for (int i = 1; i < len; i++) {
-				message += ", " + buffer[i];
-			}
-			Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
-
-			if (mOutputStream != null) {
-				try {
-					mOutputStream.write(buffer,0,len);
-				} catch (IOException e) {
-					Log.e(TAG, "write failed", e);
-					Toast.makeText(this,"write failed" , Toast.LENGTH_SHORT).show();
-				}
-			}
-			else {
-				Toast.makeText(this,"mOutputStream was null" , Toast.LENGTH_SHORT).show();
-			}
+			interpretCommand(command);
 		}
 		else {
 			Toast.makeText(this,"command was null" , Toast.LENGTH_SHORT).show();
 		}
-	} // End of onNewIntent(Intent intent)
+	}
+
+	void interpretCommand(String command) {
+		// parse the command and use known state variables to decide what to do
+		// this is where we determine accelerations, stops, etc.
+		sendData(command);
+	}
 
 	public void run() {
 		int ret = 0;
