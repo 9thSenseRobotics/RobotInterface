@@ -1,7 +1,5 @@
 package com.denbar.RobotInterface;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -49,13 +46,14 @@ public class RobotInterfaceActivity extends Activity { // implements Runnable {
 
 		byte testdata;
 		if(buttonLED.isChecked())
-			testdata=(byte)0; // button says on, light is off
+			testdata='f'; // button says on, light is off
 		else
-			testdata=(byte)1; // button says off, light is on
+			testdata='b'; // button says off, light is on
 
 		serviceBinder.sendData(testdata);
 
-		mResponseField.setText(serviceBinder.fromArduino);
+		String messages = "To arduino" + serviceBinder.toArduino + ", from Arduino = " + serviceBinder.fromArduino;
+		mResponseField.setText(messages);
 
 	}
 

@@ -3,7 +3,7 @@
     package="com.denbar.RobotInterface"
     android:versionCode="1"
     android:versionName="1.0" >
-
+	<uses-feature android:name="android.hardware.usb.accessory" />
     <uses-sdk android:minSdkVersion="12" />
 
     <application
@@ -18,15 +18,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
 		    	<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
 		     </intent-filter>
+
 		   	 <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-		     android:resource="@xml/accessory_filter" />
-
-    		 <uses-library android:name="com.android.future.usb.accessory"></uses-library> />
-
-
+		     	android:resource="@xml/accessory_filter" />
 
         </activity>
 

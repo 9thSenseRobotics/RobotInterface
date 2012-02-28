@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.http.util.EncodingUtils;
+
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -36,13 +38,14 @@ public class RobotInterfaceService extends Service implements Runnable {
 	private FileOutputStream mOutputStream;
 
 	private int intentCount;
-	public String fromArduino;
+	public String fromArduino, toArduino;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		intentCount = 0;
 		fromArduino = "nothing yet";
+		toArduino = "nothing yet";
 		setupAccessory();
 	}
 
@@ -114,7 +117,7 @@ public class RobotInterfaceService extends Service implements Runnable {
 		// this is where you handle the data you sent. You get it by calling the getReading() function
 		//mResponseField.setText("Flag: "+t.getFlag()+"; Reading: "+t.getReading()+"; Date: "+(new Date().toString()));
 		fromArduino = "Flag: "+t.getFlag()+"; Reading: "+t.getReading()+"; Date: "+(new Date().toString());
-		}
+	  }
 	};
 
 	private void openAccessory(UsbAccessory accessory) {
@@ -167,29 +170,38 @@ public class RobotInterfaceService extends Service implements Runnable {
 
 	void ReceivedNewIntent(Intent intent) {
 		Log.d("YourActivity", "ReceivedNewIntent is called!");
-		Toast.makeText(this, "Received new intent", Toast.LENGTH_SHORT).show();
 
-		intentCount += 1;
+		String command = intent.getStringExtra("command");
+		if (command != null) {
 
-		String command;
-		int val;
-		//Uri data = intent.getData();
-		//String type = intent.getType();
-		command = intent.getStringExtra("command");
-		val = intent.getIntExtra("value", 0);
-		//ReceivedData.setText(command);
+			String message = "Robot command intent received = " + command;
+			Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
 
-		byte[] buffer = new byte[1];
+			toArduino = "toArduino = " + command;
 
-		if (intentCount % 2 == 0) buffer[0]=(byte)0; // light turns off
-		else 	buffer[0]=(byte)1; // light turns on
+			byte[] buffer = EncodingUtils.getAsciiBytes(command);
+			int len = command.length();
 
-		if (mOutputStream != null) {
-			try {
-				mOutputStream.write(buffer);
-			} catch (IOException e) {
-				Log.e(TAG, "write failed", e);
+			message = "buffer length = " + len + ", value = "+ buffer[0];
+			for (int i = 1; i < len; i++) {
+				message += ", " + buffer[i];
 			}
+			Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
+
+			if (mOutputStream != null) {
+				try {
+					mOutputStream.write(buffer,0,len);
+				} catch (IOException e) {
+					Log.e(TAG, "write failed", e);
+					Toast.makeText(this,"write failed" , Toast.LENGTH_SHORT).show();
+				}
+			}
+			else {
+				Toast.makeText(this,"mOutputStream was null" , Toast.LENGTH_SHORT).show();
+			}
+		}
+		else {
+			Toast.makeText(this,"command was null" , Toast.LENGTH_SHORT).show();
 		}
 	} // End of onNewIntent(Intent intent)
 
@@ -213,6 +225,7 @@ public class RobotInterfaceService extends Service implements Runnable {
 					int value = (int)buffer[i];
 					// 'f' is the flag, use for your own logic
 					// value is the value from the arduino
+					//fromArduino = "arduino sent value = " + value;
 					m.obj = new ValueMsg('f', value);
 					mHandler.sendMessage(m);
 				}
